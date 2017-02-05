@@ -101,9 +101,7 @@ run-test: test
 
 
 install: 
-	cp -rv $(OUT_DIR)/$(APP_NAME) $(PREFIX)/bin/ && \
-	cp -rv include/*.h $(PREFIX)/include/ && \
-	cp -rv include/interfaces $(PREFIX)/include
+	cp -rv $(OUT_DIR)/$(APP_NAME) $(PREFIX)/bin/ 
 
 clean:
 	rm -rf $(OBJ_DIR)  
