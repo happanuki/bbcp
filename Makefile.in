@@ -1,8 +1,9 @@
-SHELL = /bin/bash
-CXX ?= g++
+SHELL = @build_shell@
+CXX = @build_cxx@
 
-ROOT_DIR = $(shell readlink -f .)
-DEBUG=1
+ROOT_DIR = @srcdir@
+DEBUG=@debug@
+VERSION= @PACKAGE_VERSION@
 
 OUT_DIR = out
 OBJ_DIR = obj

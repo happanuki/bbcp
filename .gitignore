@@ -16,3 +16,12 @@ install/
 
 test.site/bbcp-test-disk.dsk
 storage.file
+
+
+Makefile
+autom4te.cache/**
+autom4te.cache
+config.log
+config.status
+configure
+
