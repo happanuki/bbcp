@@ -1,0 +1,96 @@
+int exfat_mount(struct exfat* ef, const char* spec, const char* options), ef --> out, should be pre-malloced
+
+
+struct exfat
+{
+	struct exfat_dev* dev;
+	struct exfat_super_block* sb;
+	uint16_t* upcase;
+	struct exfat_node* root;
+	struct
+	{
+		cluster_t start_cluster;
+		uint32_t size;				/* in bits */
+		bitmap_t* chunk;
+		uint32_t chunk_size;		/* in bits */
+		bool dirty;
+	}
+	cmap;
+	char label[UTF8_BYTES(EXFAT_ENAME_MAX) + 1];
+	void* zero_cluster;
+	int dmask, fmask;
+	uid_t uid;
+	gid_t gid;
+	int ro;
+	bool noatime;
+};
+
+
+exfat_node* root_node = exfat->root;
+
+struct exfat_node* exfat_get_node(struct exfat_node* node); //refcounters
+void exfat_put_node(struct exfat* ef, struct exfat_node* node);
+
+
+
+struct exfat_node
+{
+	struct exfat_node* parent;
+	struct exfat_node* child;
+	struct exfat_node* next;
+	struct exfat_node* prev;
+
+	int references;
+	uint32_t fptr_index;
+	cluster_t fptr_cluster;
+	cluster_t entry_cluster;
+	off_t entry_offset;
+	cluster_t start_cluster;
+	int flags;
+	uint64_t size;
+	time_t mtime, atime;
+	le16_t name[EXFAT_NAME_MAX + 1];
+};
+
+
+void exfat_get_name(const struct exfat_node* node, char* buffer, size_t n);
+
+CLUSTER_SIZE(*ef->sb)
+
+
+/sys/class/block/sdd/sdd1/start <-- BLOCK offset of partition
+
+xama@dragon /tmp $ sudo dd if=/dev/sdd of=fileDiskDev count=1 bs=512 skip=4096
+1+0 records in
+1+0 records out
+512 bytes copied, 0,298484 s, 1,7 kB/s
+xama@dragon /tmp $ sudo dd if=/dev/sdd1 of=filePartDev count=1 bs=512 skip=2048
+1+0 records in
+1+0 records out
+512 bytes copied, 0,0019564 s, 262 kB/s
+xama@dragon /tmp $ diff ./fileDiskDev ./filePartDev
+xama@dragon /tmp $ cat /sys/class/block/sdd/sdd1/start 
+2048
+
+
+
+=============================================================
+
+ALG:
+    1. check file clusters integrity using : ... and store all file's cluster numbers
+        exfat_node->size, 
+        CLUSTER_SIZE(*ef->sb)
+        cluster_t exfat_next_cluster(const struct exfat* ef,const struct exfat_node* node, cluster_t cluster)
+        till EXFAT_CLUSTER_BAD
+        
+    2. read all avail clusters using : ... reads should be performed by 512b (sector) chunks, error reads should be substed by zeros and added to bad-sector-list to store
+
+/*
+ * Cluster to absolute offset.
+ */
+off_t exfat_c2o(const struct exfat* ef, cluster_t cluster)
+{
+	return s2o(ef, c2s(ef, cluster));
+}
+    pread()
+

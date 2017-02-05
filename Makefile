@@ -1,0 +1,114 @@
+SHELL = /bin/bash
+CXX ?= g++
+
+ROOT_DIR = $(shell readlink -f .)
+DEBUG=1
+
+OUT_DIR = out
+OBJ_DIR = obj
+
+APP_NAME=bbcp
+
+PREFIX ?= install
+
+##################################
+
+TARGETS = all default build test install clean prepare link link-test run-test distclean prepare-test
+
+gitGTEST_URL=https://github.com/google/googletest.git
+gitGTEST_DIR=googletest
+
+GTEST_DIR = $(gitGTEST_DIR)/googletest
+GMOCK_DIR = $(gitGTEST_DIR)/googlemock
+GTESTA=$(GTEST_DIR)/make/gtest_main.a
+
+
+ifeq ($(DEBUG),1)
+	CXX_FLAGS = -g -O0 -DDEBUG=1 
+else
+	CXX_FLAGS = -O2 
+endif
+
+CXX_FLAGS_CPPGENERICS=$(shell pkg-config --cflags cppgenerics)
+
+CXX_FLAGS += -c $(CXX_FLAGS_CPPGENERICS) -I$(ROOT_DIR)/include -I$(ROOT_DIR)/include/interfaces -I$(ROOT_DIR)/exfat.bundle
+CXX_FLAGS_TEST = -isystem $(GTEST_DIR)/include -isystem $(GMOCK_DIR)/include $(CXX_FLAGS) -I$(ROOT_DIR)/include/include.test -I$(GTEST_DIR)/include -I$(GMOCK_DIR)/include
+
+SRCS = $(wildcard $(ROOT_DIR)/src/*.cpp)
+SRCS_TEST = $(wildcard $(ROOT_DIR)/src.test/*.cpp)
+
+_OBJS = $(subst .cpp,_app.o,$(SRCS))
+OBJS = $(subst /src/,/$(OBJ_DIR)/,$(_OBJS))
+
+_OBJS_TEST = $(subst .cpp,_test.o,$(SRCS_TEST))
+OBJS_TEST = $(subst /src.test/,/$(OBJ_DIR)/,$(_OBJS_TEST))
+
+LD_FLAGS_CPPGENERICS=$(shell pkg-config --libs cppgenerics)
+
+LD_FLAGS=-Wl,-lpthread $(LD_FLAGS_CPPGENERICS)
+LD_FLAGS_TEST=$(LD_FLAGS)
+
+
+.PHONY:	$(TARGETS)
+
+
+default: prepare build test
+
+
+all: prepare build test install
+
+
+build: prepare link
+
+
+prepare: 
+	mkdir -p $(OUT_DIR) && \
+	mkdir -p $(OBJ_DIR) && \
+	mkdir -p $(PREFIX) && \
+	mkdir -p $(PREFIX)/lib && \
+	mkdir -p $(PREFIX)/include && \
+	mkdir -p $(PREFIX)/bin
+
+
+prepare-test: 
+	[[ ! -d $(gitGTEST_DIR) ]] && { \
+		git clone $(gitGTEST_URL) $(gitGTEST_DIR) && \
+		make -C $(GMOCK_DIR)/make &&  \
+		make -C $(GTEST_DIR)/make ; \
+	} || { :; }
+	
+
+#compile
+$(ROOT_DIR)/$(OBJ_DIR)/%_test.o: src.test/%.cpp | prepare-test
+	$(CXX) $(CXX_FLAGS_TEST) $< -o $@
+
+$(ROOT_DIR)/$(OBJ_DIR)/%_app.o: src/%.cpp | prepare 
+	$(CXX) $(CXX_FLAGS) $< -o $@
+
+
+link: $(OBJS)
+	$(CXX) $(OBJS) ./exfat.bundle/libexfat.a -o $(OUT_DIR)/$(APP_NAME) $(LD_FLAGS)
+
+test: prepare prepare-test link-test 
+
+
+link-test: $(OBJS_TEST) link
+	$(CXX) $(OBJS_TEST) $(OBJ_DIR)/Marshal_app.o $(OBJ_DIR)/Types_app.o $(GTESTA) -o $(OUT_DIR)/$(APP_NAME)-test $(LD_FLAGS_TEST)
+
+
+run-test: test
+	LD_LIBRARY_PATH=$(OUT_DIR) $(OUT_DIR)/$(APP_NAME)-test
+
+
+install: 
+	cp -rv $(OUT_DIR)/$(APP_NAME) $(PREFIX)/bin/ && \
+	cp -rv include/*.h $(PREFIX)/include/ && \
+	cp -rv include/interfaces $(PREFIX)/include
+
+clean:
+	rm -rf $(OUT_DIR) && \
+	rm -rf $(OBJ_DIR)  
+
+distclean: clean
+	rm -rf $(gitGTEST_DIR)
+	
