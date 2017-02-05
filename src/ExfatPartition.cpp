@@ -3,6 +3,7 @@
 
 #include "Syscalls.h"
 #include "Exception.h"
+#include <Logger.h>
 
 #include "ExfatNode.h"
 #include "ExfatPartition.h"
@@ -88,6 +89,7 @@ void ExfatPartition::_dirsRecursiveWalk(exfat_node* startNode, std::string curPa
 	}
 
 	case ExfatNodeTypeE::EXF_NODE_DIR : {
+
 		auto it = node.open(); // close will be called on node's destruction
 
 		exfat_node* l_n = nullptr;

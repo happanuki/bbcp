@@ -136,7 +136,7 @@ void Application::_validateDevFiles() throw (std::exception&)
 
 void Application::_setHddParameters() throw (std::exception&)
 {
-	m_drive.reset( new Drive(m_diskDev));
+	m_drive.reset( new Drive(System::basename_(m_diskDev)));
 	m_drive->init();
 }
 

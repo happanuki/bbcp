@@ -1,5 +1,7 @@
 #include "sys/stat.h"
 
+#include <Logger.h>
+
 #include "ExfatNode.h"
 #include "Exception.h"
 
@@ -60,7 +62,8 @@ exfat_iterator& ExfatNode::open() throw (std::exception&)
 	}
 
 	if ( exfat_opendir(m_exfat.get(), m_node, &m_it)) {
-		THROW_SYS_EXCEPTION("exfat_opendir failed");
+		//TODO THROW_SYS_EXCEPTION("exfat_opendir failed");
+		LOGSTDOUT("skipping directory " << getName() << "  ERRNO: " << errno << " ERRSTR:" << strerror(errno));
 	}
 
 	m_isOpen = true;
@@ -91,9 +94,14 @@ Offsets_t ExfatNode::getOffsets() const
 	auto next = m_node->start_cluster;
 	Offsets_t out;
 
-	Offset val = { exfat_c2o(m_exfat.get(),next), getClusterSize() };
+	Offset val;
+	val.offset = exfat_c2o(m_exfat.get(),next);
+	val.size = getClusterSize();
 	out.push_back(val);
 
+	if (! val.offset) {
+		return out;
+	}
 
 	bool badMark = false;
 	for (auto i=0; i < calc_clusters; ++i ) {
@@ -101,7 +109,7 @@ Offsets_t ExfatNode::getOffsets() const
 		if (badMark) {
 			Offset val = { 0 };
 			out.push_back(val);
-			continue;
+			return out;
 		} //loop to end with 0
 
 		next = exfat_next_cluster( m_exfat.get(), m_node, next);
@@ -109,8 +117,7 @@ Offsets_t ExfatNode::getOffsets() const
 			//TODO: there should be errno analysis
 			Offset val = { 0 };
 			out.push_back(val);
-			badMark=true;
-			continue;
+			return out;
 		}
 
 		Offset val = { exfat_c2o(m_exfat.get(),next), getClusterSize() };

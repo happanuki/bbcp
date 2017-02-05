@@ -106,9 +106,9 @@ install:
 	cp -rv include/interfaces $(PREFIX)/include
 
 clean:
-	rm -rf $(OUT_DIR) && \
 	rm -rf $(OBJ_DIR)  
 
 distclean: clean
+	rm -rf $(OUT_DIR) && \
 	rm -rf $(gitGTEST_DIR)
 	

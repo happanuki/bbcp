@@ -86,7 +86,6 @@ void Processor::_recoverUnit(std::string path, Unit& u)
 		catch (std::exception& e) {
 			//TODO: norm impl
 			LOGSTDOUTT("Can't read devFile, offs: [" << it.offset << "]  file: " << u.getFile()->getName());
-			continue;
 		}
 
 		System::write( *recoverFd, buf, it.size);
