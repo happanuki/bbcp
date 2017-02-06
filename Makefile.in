@@ -53,10 +53,10 @@ LD_FLAGS_TEST=$(LD_FLAGS)
 .PHONY:	$(TARGETS)
 
 
-default: prepare build test
+default: prepare build 
 
 
-all: prepare build test install
+all: prepare build install
 
 
 build: prepare link
