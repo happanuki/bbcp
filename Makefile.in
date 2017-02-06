@@ -87,8 +87,8 @@ $(ROOT_DIR)/$(OBJ_DIR)/%_app.o: src/%.cpp | prepare
 	$(CXX) $(CXX_FLAGS) $< -o $@
 
 
-link: $(OBJS)
-	$(CXX) $(OBJS) ./exfat.bundle/libexfat.a -o $(OUT_DIR)/$(APP_NAME) $(LD_FLAGS)
+link: $(OBJS) libexfat
+	$(CXX) $(OBJS) ./exfat.bundle/libexfat/libexfat.a -o $(OUT_DIR)/$(APP_NAME) $(LD_FLAGS)
 
 test: prepare prepare-test link-test 
 
@@ -100,6 +100,9 @@ link-test: $(OBJS_TEST) link
 run-test: test
 	LD_LIBRARY_PATH=$(OUT_DIR) $(OUT_DIR)/$(APP_NAME)-test
 
+
+libexfat: 
+	$(MAKE) -C $(ROOT_DIR)/exfat.bundle/libexfat 
 
 install: 
 	cp -rv $(OUT_DIR)/$(APP_NAME) $(PREFIX)/bin/ 
