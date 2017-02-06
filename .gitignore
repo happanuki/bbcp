@@ -45,6 +45,5 @@ exfat.bundle/libexfat/node.o
 exfat.bundle/libexfat/time.o
 exfat.bundle/libexfat/utf.o
 exfat.bundle/libexfat/utils.o
-install-sh
 missing
 
