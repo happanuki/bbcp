@@ -11,7 +11,7 @@
 int main(int argc, char** argv, char** envp)
 {
 
-	ArgsParser parser(argc,argv,envp);
+	ArgsParser parser( argc, argv, envp);
 
 	Application app( parser.get());
 

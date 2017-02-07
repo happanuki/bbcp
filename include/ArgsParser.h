@@ -13,6 +13,7 @@ class ArgsParser
 	AppParameters m_parameters;
 
 	void _parseArgs();
+	void _runWizzard();
 
 public:
 	ArgsParser(int argc, char** argv, char** envp);

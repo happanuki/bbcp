@@ -19,6 +19,8 @@ void ArgsParser::printHelp()
 {
 	Logger::getInstance().setLogSTDOUT();
 	Logger::getInstance().log() << " Usage: " <<  m_parameters.appName << " : " <<
+			"\n\t" << "[ -w, --wizard      ]\t " << " Wizard Mode                       Example: -w" <<
+			"\n\t" <<
 			"\n\t" << "[ -d, --diskDev     ]\t " << " Disk device file                  Example: -d /dev/sda" <<
 			"\n\t" << "[ -p, --partDev     ]\t " << " Partition device file             Example: -p /dev/sda1" <<
 			"\n\t" << "[ -s, --storageFile ]\t " << " Processing status storage file    Example: -s status.sda1" <<
@@ -35,9 +37,11 @@ void ArgsParser::_parseArgs()
 {
 	m_parameters.appName = System::basename_( m_argv[0]);
 
-	const char* short_options = "hd:p:s:r:m:";
+	const char* short_options = "hwd:p:s:r:m:";
 	const option long_options[] = {
 			{"help",no_argument,NULL,'h'},
+
+			{"wizard", no_argument, NULL,'w'},
 
 			{"diskDev",required_argument, NULL ,'d'},
 			{"partDev",required_argument, NULL, 'p'},
@@ -54,7 +58,13 @@ void ArgsParser::_parseArgs()
 	while ( (res=getopt_long(m_argc,m_argv,short_options,long_options,&option_index)) != -1) {
 
 		bool exit = false;
+		bool wizzard = false;
+
 		switch(res) {
+
+		case 'w' : {
+			wizzard = true;
+		} break;
 
 		case 'd' : {
 			m_parameters.diskDev = std::string(optarg);
@@ -95,8 +105,17 @@ void ArgsParser::_parseArgs()
 				::exit(0);
 			}
 		}
-	}
+
+		if ( wizzard) {
+			_runWizzard();
+			break; //while break
+		}
+
+	} // while
 }
 
 
+void ArgsParser::_runWizzard()
+{
 
+}

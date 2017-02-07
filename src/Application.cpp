@@ -65,6 +65,18 @@ void Application::init()
 
 }
 
+void Application::_genericRun()
+{
+	UnitStorage storage( m_parameters.storageFile);
+	storage.init();
+
+	auto units = storage.load();
+
+	Processor p( units, m_parameters.partDev, m_parameters.restoreDir);
+
+	p.process();
+}
+
 
 void Application::run()
 {
@@ -73,16 +85,9 @@ void Application::run()
 		ef.init();
 		UnitStorage storage( m_parameters.storageFile);
 
-		storage.store(ef.getUnitList());
+		storage.store( ef.getUnitList());
 	}
 
-	UnitStorage storage( m_parameters.storageFile);
-	storage.init();
-
-	auto units = storage.load();
-
-	Processor p(units,m_parameters.partDev,m_parameters.restoreDir);
-
-	p.process();
+	_genericRun();
 
 }

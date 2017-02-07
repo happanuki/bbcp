@@ -22,26 +22,6 @@ Processor::~Processor()
 	close(m_devFd);
 }
 
-
-//void Processor::_mkdir(std::string pathName) throw (std::exception&)
-//{
-//	if (System::isDirExist(pathName)) {
-//		DEBUGSTDOUTT(pathName << " exists");
-//		return;
-//	}
-//	else {
-//		std::string pathCopy (pathName.c_str());
-//		auto parentPath = std::string( dirname(const_cast<char*>(pathCopy.c_str())));
-//		_mkdir(parentPath);
-//
-//		auto ret = mkdir(pathName.c_str(), 0755);
-//		if (ret) {
-//			THROW_SYS_EXCEPTION("mkdir " << pathName << " failed");
-//		}
-//	}
-//}
-
-
 void Processor::_processUnit(Unit& in)
 {
 	if ( in.isProcessed()) {
@@ -81,7 +61,7 @@ void Processor::_recoverUnit(std::string path, Unit& u)
 		char* buf = const_cast<char*>( sbuf.data());
 
 		try {
-			System::pread(m_devFd,buf,it.size,it.offset);
+			System::pread(m_devFd, buf, it.size, it.offset);
 		}
 		catch (std::exception& e) {
 			//TODO: norm impl

@@ -15,7 +15,6 @@ class Processor
 
 	void _processUnit(Unit&);
 	void _recoverUnit(std::string path, Unit&);
-//	void _mkdir(std::string pathName) throw (std::exception&);
 
 public:
 	Processor(const std::vector<Unit>&, std::string devFile, std::string outDir);

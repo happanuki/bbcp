@@ -17,6 +17,8 @@ class Application
 	bool m_initHdd = false;
 	void _setHddParameters() throw (std::exception&);
 
+	void _genericRun();
+
 public:
 	Application(AppParameters);
 
