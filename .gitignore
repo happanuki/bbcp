@@ -31,8 +31,6 @@ INSTALL
 Makefile.am
 NEWS
 README
-compile
-depcomp
 exfat.bundle/libexfat/.deps/
 exfat.bundle/libexfat/cluster.o
 exfat.bundle/libexfat/config.h
@@ -45,5 +43,4 @@ exfat.bundle/libexfat/node.o
 exfat.bundle/libexfat/time.o
 exfat.bundle/libexfat/utf.o
 exfat.bundle/libexfat/utils.o
-missing
 
