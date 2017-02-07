@@ -27,12 +27,34 @@ struct Offset
 using Offsets_t = std::vector< Offset > ; // partition-dev-file-offset, and its status
 
 
-struct FileInternals {
+struct FileInternals
+{
 	std::string fileName;
 	Offsets_t offsets;
 };
 
 
-struct UnitInternals {
+struct UnitInternals
+{
 	bool isProcessed = false;
+};
+
+
+enum class AppMode_E
+{
+	APP_START,
+	APP_CONTINUE,
+	APP_BAD_MODE
+};
+
+struct AppParameters
+{
+	std::string appName;
+
+	std::string diskDev;
+	std::string partDev;
+	std::string storageFile = "storage.file";
+	std::string restoreDir;
+
+	AppMode_E mode = AppMode_E::APP_BAD_MODE;
 };

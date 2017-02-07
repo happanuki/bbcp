@@ -10,122 +10,35 @@
 #include "Processor.h"
 
 
-
-Application::Application(int argc, char** argv) :
-	m_argc(argc),
-	m_argv(argv)
+Application::Application(AppParameters in):
+		m_parameters(in)
 {
-	m_appName = System::basename_( m_argv[0]);
-}
-
-
-void Application::_parseArgs()
-{
-	const char* short_options = "hd:p:s:r:m:";
-	const option long_options[] = {
-			{"help",no_argument,NULL,'h'},
-
-			{"diskDev",optional_argument, NULL ,'d'},
-			{"partDev",required_argument, NULL, 'p'},
-
-			{"storageFile",optional_argument, NULL, 's'},
-			{"restoreDir",required_argument, NULL, 'r'},
-
-			{"mode", required_argument, NULL,'m'},
-
-			{NULL,0,NULL,0}
-	};
-	int res,option_index;
-
-	while ( (res=getopt_long(m_argc,m_argv,short_options,long_options,&option_index)) != -1) {
-
-		bool exit = false;
-		switch(res) {
-
-		case 'd' : {
-			m_diskDev = std::string(optarg);
-		} break;
-
-		case 'p' : {
-			m_partDev = std::string(optarg);
-		} break;
-
-		case 's' : {
-			m_storageFile = std::string(optarg);
-		} break;
-
-		case 'r' : {
-			m_restoreDir = std::string(optarg);
-		} break;
-
-		case 'm' : {
-			auto val = atoi(optarg);
-
-			switch(val) {
-			case 0:
-				m_mode = AppMode_E::APP_START;
-				break;
-			case 1:
-				m_mode = AppMode_E::APP_CONTINUE;
-				break;
-			default:
-				m_mode = AppMode_E::APP_BAD_MODE;
-			}
-		} break;
-
-		case 'h':
-			exit = true;
-		default :
-			_printHelp();
-			if (exit) {
-				::exit(0);
-			}
-		}
-	}
-}
-
-
-void Application::_printHelp()
-{
-	Logger::getInstance().setLogSTDOUT();
-	Logger::getInstance().log() << " Usage: " <<  m_appName << " : " <<
-			"\n\t" << "[ -d, --diskDev     ]\t " << " Disk device file                  Example: -d /dev/sda" <<
-			"\n\t" << "[ -p, --partDev     ]\t " << " Partition device file             Example: -p /dev/sda1" <<
-			"\n\t" << "[ -s, --storageFile ]\t " << " Processing status storage file    Example: -s status.sda1" <<
-			"\n\t" << "[ -m, --mode        ]\t " << " Processing mode                   Example: -m 0" <<
-			"\n\t" << "                        " << "        Available modes: " <<
-			"\n\t" << "                        " << "             0 - start new full processing of the partition" <<
-			"\n\t" << "                        " << "             1 - continue processing partition using status file" <<
-			"\n\t" << "[ -r, --restoreDir  ]\t " << " Restore directory                 Example: -r /tmp/disk" <<
-			"\n" << std::endl;
 }
 
 
 void Application::_validateParams() throw (std::exception&)
 {
-	if ( m_mode == AppMode_E::APP_BAD_MODE) {
-		_printHelp();
+	if ( m_parameters.mode == AppMode_E::APP_BAD_MODE) {
 		THROW_LOGIC_EXCEPTION("Bad application mode ");
 	}
 
-	if ( m_restoreDir.empty()) {
-		THROW_LOGIC_EXCEPTION("Empty restore dir");
+	if ( m_parameters.restoreDir.empty()) {
+		THROW_LOGIC_EXCEPTION("No restore dir given");
 	}
 
-	if ( m_partDev.empty()) {
-		THROW_LOGIC_EXCEPTION("Empty partition device");
+	if ( m_parameters.partDev.empty()) {
+		THROW_LOGIC_EXCEPTION("No partition device given");
 	}
-
 }
 
 
 void Application::_validateDevFiles() throw (std::exception&)
 {
-	if (! System::isFileExist(m_partDev)) {
-		THROW_SYS_EXCEPTION("file " << m_partDev << " not found");
+	if (! System::isFileExist( m_parameters.partDev)) {
+		THROW_SYS_EXCEPTION("file " << m_parameters.partDev << " not found");
 	}
 
-	if (! System::isFileExist(m_diskDev)) {
+	if (! System::isFileExist( m_parameters.diskDev)) {
 		WARNSTDOUTT("no disk file, skipping hw setup for hdd");
 	}
 	else {
@@ -136,14 +49,13 @@ void Application::_validateDevFiles() throw (std::exception&)
 
 void Application::_setHddParameters() throw (std::exception&)
 {
-	m_drive.reset( new Drive(System::basename_(m_diskDev)));
+	m_drive.reset( new Drive(System::basename_(m_parameters.diskDev)));
 	m_drive->init();
 }
 
 
 void Application::init()
 {
-	_parseArgs();
 	_validateParams();
 	_validateDevFiles();
 
@@ -156,20 +68,20 @@ void Application::init()
 
 void Application::run()
 {
-	if ( m_mode == AppMode_E::APP_START) {
-		ExfatPartition ef( m_partDev);
+	if ( m_parameters.mode == AppMode_E::APP_START) {
+		ExfatPartition ef( m_parameters.partDev);
 		ef.init();
-		UnitStorage storage( m_storageFile);
+		UnitStorage storage( m_parameters.storageFile);
 
 		storage.store(ef.getUnitList());
 	}
 
-	UnitStorage storage( m_storageFile);
+	UnitStorage storage( m_parameters.storageFile);
 	storage.init();
 
 	auto units = storage.load();
 
-	Processor p(units,m_partDev,m_restoreDir);
+	Processor p(units,m_parameters.partDev,m_parameters.restoreDir);
 
 	p.process();
 

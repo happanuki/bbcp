@@ -4,15 +4,16 @@
 #include <Syscalls.h>
 #include <Exception.h>
 
-#include "ExfatPartition.h"
-#include "UnitStorage.h"
-#include "Processor.h"
 #include "Application.h"
+#include "ArgsParser.h"
 
 
-int main(int argc, char** argv)
+int main(int argc, char** argv, char** envp)
 {
-	Application app(argc,argv);
+
+	ArgsParser parser(argc,argv,envp);
+
+	Application app( parser.get());
 
 	app.init();
 
