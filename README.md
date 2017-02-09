@@ -2,4 +2,4 @@
 bad block copy
 
 
-autoconf; make; make install ?
+autoreconf; make; make install ?

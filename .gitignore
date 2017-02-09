@@ -17,7 +17,6 @@ install/
 test.site/bbcp-test-disk.dsk
 storage.file
 
-
 Makefile
 autom4te.cache/**
 autom4te.cache
@@ -32,15 +31,13 @@ Makefile.am
 NEWS
 README
 exfat.bundle/libexfat/.deps/
-exfat.bundle/libexfat/cluster.o
-exfat.bundle/libexfat/config.h
-exfat.bundle/libexfat/io.o
-exfat.bundle/libexfat/libexfat.a
-exfat.bundle/libexfat/log.o
-exfat.bundle/libexfat/lookup.o
-exfat.bundle/libexfat/mount.o
-exfat.bundle/libexfat/node.o
-exfat.bundle/libexfat/time.o
-exfat.bundle/libexfat/utf.o
-exfat.bundle/libexfat/utils.o
+exfat.bundle/libexfat/*.o
 
+aclocal.m4
+configure
+exfat.bundle/libexfat/Makefile.in
+exfat.bundle/libexfat/aclocal.m4
+exfat.bundle/libexfat/configure
+
+exfat.bundle/libexfat/config.h
+exfat.bundle/libexfat/libexfat.a
