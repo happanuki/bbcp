@@ -71,11 +71,11 @@ TEST_F(MarshalTest,Marshal_Unmarshal_FileInternals)
 	Offsets_t ofs1 = { {1,2}, {3,4}, {5,6}, {7,8}, {9,0}, {11,12} };
 	Offsets_t ofs2 = { {10,20}, {30,40}, {50,60}, {70,80}, {90,0} };
 
-	FileInternals fi1;
+	FileInternals_t fi1;
 	fi1.fileName = "justFilename1";
 	fi1.offsets = ofs1;
 
-	FileInternals fi2;
+	FileInternals_t fi2;
 	fi2.fileName = "justFilenamexxx2";
 	fi2.offsets = ofs2;
 
@@ -88,8 +88,8 @@ TEST_F(MarshalTest,Marshal_Unmarshal_FileInternals)
 	memcpy( ptr, m1.ptr.get(), m1.size );
 	memcpy( ptr + m1.size, m2.ptr.get(), m2.size );
 
-	FileInternals rfi1 = Marshal::unmarshalFileInternals(&ptr);
-	FileInternals rfi2 = Marshal::unmarshalFileInternals(&ptr);
+	FileInternals_t rfi1 = Marshal::unmarshalFileInternals(&ptr);
+	FileInternals_t rfi2 = Marshal::unmarshalFileInternals(&ptr);
 
 	//checks
 

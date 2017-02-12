@@ -6,11 +6,11 @@
 
 class ExfatFile : public File_I
 {
-	FileInternals m_internals;
+	FileInternals_t m_internals;
 
 public:
 	ExfatFile() = default;
-	ExfatFile(FileInternals fi); // c++11 rvalue construction
+	ExfatFile(FileInternals_t fi); // c++11 rvalue construction
 
 	~ExfatFile() {}
 
@@ -18,5 +18,5 @@ public:
 	Offsets_t getOffsets() override { return m_internals.offsets; }
 
 	Marshal_t marshal() override;
-	FileInternals& getInternals() { return m_internals; }
+	FileInternals_t& getInternals() { return m_internals; }
 };

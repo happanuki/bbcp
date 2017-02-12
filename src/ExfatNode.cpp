@@ -94,7 +94,7 @@ Offsets_t ExfatNode::getOffsets() const
 	auto next = m_node->start_cluster;
 	Offsets_t out;
 
-	Offset val;
+	Offset_t val;
 	val.offset = exfat_c2o(m_exfat.get(),next);
 	val.size = getClusterSize();
 	out.push_back(val);
@@ -107,7 +107,7 @@ Offsets_t ExfatNode::getOffsets() const
 	for (auto i=0; i < calc_clusters; ++i ) {
 
 		if (badMark) {
-			Offset val = { 0 };
+			Offset_t val = { 0 };
 			out.push_back(val);
 			return out;
 		} //loop to end with 0
@@ -115,12 +115,12 @@ Offsets_t ExfatNode::getOffsets() const
 		next = exfat_next_cluster( m_exfat.get(), m_node, next);
 		if ( next == EXFAT_CLUSTER_BAD) {
 			//TODO: there should be errno analysis
-			Offset val = { 0 };
+			Offset_t val = { 0 };
 			out.push_back(val);
 			return out;
 		}
 
-		Offset val = { exfat_c2o(m_exfat.get(),next), getClusterSize() };
+		Offset_t val = { exfat_c2o(m_exfat.get(),next), getClusterSize() };
 		out.push_back(val);
 	}
 

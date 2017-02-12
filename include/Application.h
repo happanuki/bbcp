@@ -7,7 +7,7 @@
 
 class Application
 {
-	AppParameters m_parameters;
+	AppParameters_t m_parameters;
 
 	std::shared_ptr<Drive> m_drive;
 
@@ -20,7 +20,7 @@ class Application
 	void _genericRun();
 
 public:
-	Application(AppParameters);
+	Application(AppParameters_t);
 
 	void init(); // throw (std::exception&);
 

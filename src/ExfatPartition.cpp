@@ -79,7 +79,7 @@ void ExfatPartition::_dirsRecursiveWalk(exfat_node* startNode, std::string curPa
 
 	case ExfatNodeTypeE::EXF_NODE_FILE : {
 
-		FileInternals fi;
+		FileInternals_t fi;
 		fi.fileName = curPath + node.getName();
 		fi.offsets = node.getOffsets();
 

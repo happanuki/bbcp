@@ -16,8 +16,8 @@ namespace Marshal
 	Offsets_t unmarshalOffsets( char** input ); //*input will be moved to point next elem;
 
 
-	Marshal_t marshalFileInternals( const FileInternals& );
-	FileInternals unmarshalFileInternals( char** input);
+	Marshal_t marshalFileInternals( const FileInternals_t& );
+	FileInternals_t unmarshalFileInternals( char** input);
 
 	Marshal_t marshalUnitInternals( const UnitInternals& );
 	UnitInternals unmarshalUnitInternals( char** input );

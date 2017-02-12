@@ -3,6 +3,7 @@
 
 #include <Logger.h>
 
+#include "Wizard.h"
 #include "ArgsParser.h"
 
 
@@ -29,6 +30,10 @@ void ArgsParser::printHelp()
 			"\n\t" << "                        " << "             0 - start new full processing of the partition" <<
 			"\n\t" << "                        " << "             1 - continue processing partition using status file" <<
 			"\n\t" << "[ -r, --restoreDir  ]\t " << " Restore directory                 Example: -r /tmp/disk" <<
+			"\n\t" << "[ -t, --restoreMode ]\t " << " Restore mode                   Example: -t 0" <<
+			"\n\t" << "                        " << "        Available modes: " <<
+			"\n\t" << "                        " << "             0 - restore only full recoverable files" <<
+			"\n\t" << "                        " << "             1 - restore all files" <<
 			"\n" << std::endl;
 }
 
@@ -37,7 +42,11 @@ void ArgsParser::_parseArgs()
 {
 	m_parameters.appName = System::basename_( m_argv[0]);
 
-	const char* short_options = "hwd:p:s:r:m:";
+	//TODO: refactor
+	m_parameters.restore_mode = RestoreMode_E::RESTORE_ONLY_GOOD;
+	//
+
+	const char* short_options = "hwd:p:s:r:m:t:";
 	const option long_options[] = {
 			{"help",no_argument,NULL,'h'},
 
@@ -50,6 +59,7 @@ void ArgsParser::_parseArgs()
 			{"restoreDir",required_argument, NULL, 'r'},
 
 			{"mode", required_argument, NULL,'m'},
+			{"restoreMode", required_argument, NULL,'t'},
 
 			{NULL,0,NULL,0}
 	};
@@ -87,13 +97,28 @@ void ArgsParser::_parseArgs()
 
 			switch(val) {
 			case 0:
-				m_parameters.mode = AppMode_E::APP_START;
+				m_parameters.app_mode = AppMode_E::APP_START;
 				break;
 			case 1:
-				m_parameters.mode = AppMode_E::APP_CONTINUE;
+				m_parameters.app_mode = AppMode_E::APP_CONTINUE;
 				break;
 			default:
-				m_parameters.mode = AppMode_E::APP_BAD_MODE;
+				m_parameters.app_mode = AppMode_E::APP_BAD_MODE;
+			}
+		} break;
+
+		case 't' : {
+			auto val = atoi(optarg);
+
+			switch(val) {
+			case 0:
+				m_parameters.restore_mode = RestoreMode_E::RESTORE_ONLY_GOOD;
+				break;
+			case 1:
+				m_parameters.restore_mode = RestoreMode_E::RESTORE_ALL;
+				break;
+			default:
+				m_parameters.restore_mode = RestoreMode_E::RESTORE_UNKNOWN;
 			}
 		} break;
 
@@ -117,5 +142,6 @@ void ArgsParser::_parseArgs()
 
 void ArgsParser::_runWizzard()
 {
-
+	Wizard w( m_parameters);
+	w.run();
 }

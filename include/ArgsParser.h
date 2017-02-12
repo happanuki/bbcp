@@ -10,7 +10,7 @@ class ArgsParser
 	char** m_argv = nullptr;
 	char** m_envp = nullptr;
 
-	AppParameters m_parameters;
+	AppParameters_t m_parameters;
 
 	void _parseArgs();
 	void _runWizzard();
@@ -18,7 +18,7 @@ class ArgsParser
 public:
 	ArgsParser(int argc, char** argv, char** envp);
 
-	AppParameters get() const { return m_parameters; }
+	AppParameters_t get() const { return m_parameters; }
 
 	void printHelp();
 };

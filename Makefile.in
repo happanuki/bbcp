@@ -46,7 +46,7 @@ OBJS_TEST = $(subst /src.test/,/$(OBJ_DIR)/,$(_OBJS_TEST))
 
 LD_FLAGS_CPPGENERICS=$(shell pkg-config --libs cppgenerics)
 
-LD_FLAGS=-Wl,-lpthread $(LD_FLAGS_CPPGENERICS)
+LD_FLAGS=-Wl,-lpthread -ludev $(LD_FLAGS_CPPGENERICS)
 LD_FLAGS_TEST=$(LD_FLAGS)
 
 

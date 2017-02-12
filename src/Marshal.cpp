@@ -104,7 +104,7 @@ Offsets_t unmarshalOffsets( char** input )
 }
 
 
-Marshal_t marshalFileInternals( const FileInternals& in)
+Marshal_t marshalFileInternals( const FileInternals_t& in)
 {
 	auto m1 = marshalString(in.fileName);
 	auto m2 = marshalOffsets(in.offsets);
@@ -115,12 +115,12 @@ Marshal_t marshalFileInternals( const FileInternals& in)
 }
 
 
-FileInternals unmarshalFileInternals( char** input)
+FileInternals_t unmarshalFileInternals( char** input)
 {
 	auto str = unmarshalString( input);
 	auto ofs = unmarshalOffsets( input);
 
-	FileInternals ret;
+	FileInternals_t ret;
 
 	ret.fileName = str;
 	ret.offsets = ofs;

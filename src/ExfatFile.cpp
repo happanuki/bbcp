@@ -2,7 +2,7 @@
 #include "ExfatFile.h"
 #include "Marshal.h"
 
-ExfatFile::ExfatFile(FileInternals fi) :
+ExfatFile::ExfatFile(FileInternals_t fi) :
 	File_I(),
 	m_internals( std::move(fi))
 {

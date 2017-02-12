@@ -10,7 +10,7 @@
 #include "Processor.h"
 
 
-Application::Application(AppParameters in):
+Application::Application(AppParameters_t in):
 		m_parameters(in)
 {
 }
@@ -18,8 +18,12 @@ Application::Application(AppParameters in):
 
 void Application::_validateParams() throw (std::exception&)
 {
-	if ( m_parameters.mode == AppMode_E::APP_BAD_MODE) {
+	if ( m_parameters.app_mode == AppMode_E::APP_BAD_MODE) {
 		THROW_LOGIC_EXCEPTION("Bad application mode ");
+	}
+
+	if ( m_parameters.restore_mode == RestoreMode_E::RESTORE_UNKNOWN) {
+		THROW_LOGIC_EXCEPTION("Unknown restore mode ");
 	}
 
 	if ( m_parameters.restoreDir.empty()) {
@@ -72,7 +76,7 @@ void Application::_genericRun()
 
 	auto units = storage.load();
 
-	Processor p( units, m_parameters.partDev, m_parameters.restoreDir);
+	Processor p( units, m_parameters.partDev, m_parameters.restoreDir, m_parameters.restore_mode);
 
 	p.process();
 }
@@ -80,7 +84,7 @@ void Application::_genericRun()
 
 void Application::run()
 {
-	if ( m_parameters.mode == AppMode_E::APP_START) {
+	if ( m_parameters.app_mode == AppMode_E::APP_START) {
 		ExfatPartition ef( m_parameters.partDev);
 		ef.init();
 		UnitStorage storage( m_parameters.storageFile);

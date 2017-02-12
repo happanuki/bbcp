@@ -66,7 +66,7 @@ std::vector<Unit> UnitStorage::load()
 		char* ptr = (char*) m_mmap.get() + off;
 		auto ptrInitial = ptr;
 
-		FileInternals fi = Marshal::unmarshalFileInternals(&ptr);
+		FileInternals_t fi = Marshal::unmarshalFileInternals(&ptr);
 
 		auto f = std::make_shared<ExfatFile>( ExfatFile(fi));
 

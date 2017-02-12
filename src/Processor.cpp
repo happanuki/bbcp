@@ -8,10 +8,11 @@
 #include "Exception.h"
 
 
-Processor::Processor(const std::vector<Unit>& units, std::string devFile, std::string outDir) :
+Processor::Processor(const std::vector<Unit>& units, std::string devFile, std::string outDir,RestoreMode_E m) :
 	m_units(units),
 	m_devFile(devFile),
-	m_outDir(outDir)
+	m_outDir(outDir),
+	m_restoreMode(m)
 {
 	m_devFd = System::open(m_devFile.c_str(),O_RDWR,0);
 }
@@ -66,6 +67,12 @@ void Processor::_recoverUnit(std::string path, Unit& u)
 		catch (std::exception& e) {
 			//TODO: norm impl
 			LOGSTDOUTT("Can't read devFile, offs: [" << it.offset << "]  file: " << u.getFile()->getName());
+
+			if ( m_restoreMode == RestoreMode_E::RESTORE_ONLY_GOOD) {
+				break;
+			}
+			else if (m_restoreMode == RestoreMode_E::RESTORE_ALL) {
+			}
 		}
 
 		System::write( *recoverFd, buf, it.size);

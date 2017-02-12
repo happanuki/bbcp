@@ -14,20 +14,20 @@ struct Marshal_t {
 	Marshal_t operator+(const Marshal_t&);
 };
 
-struct Offset
+struct Offset_t
 {
 	off_t offset;
 	int size;
 
-	bool operator==(const Offset& rhs) { return (offset == rhs.offset) && (size == rhs.size); }
-	bool operator!=(const Offset& rhs) { return !operator==(rhs); }
+	bool operator==(const Offset_t& rhs) { return (offset == rhs.offset) && (size == rhs.size); }
+	bool operator!=(const Offset_t& rhs) { return !operator==(rhs); }
 };
 
 
-using Offsets_t = std::vector< Offset > ; // partition-dev-file-offset, and its status
+using Offsets_t = std::vector< Offset_t > ; // partition-dev-file-offset, and its status
 
 
-struct FileInternals
+struct FileInternals_t
 {
 	std::string fileName;
 	Offsets_t offsets;
@@ -47,7 +47,15 @@ enum class AppMode_E
 	APP_BAD_MODE
 };
 
-struct AppParameters
+enum class RestoreMode_E
+{
+	RESTORE_ONLY_GOOD,
+	RESTORE_ALL,
+	RESTORE_UNKNOWN
+};
+
+
+struct AppParameters_t
 {
 	std::string appName;
 
@@ -56,5 +64,15 @@ struct AppParameters
 	std::string storageFile = "storage.file";
 	std::string restoreDir;
 
-	AppMode_E mode = AppMode_E::APP_BAD_MODE;
+	AppMode_E app_mode = AppMode_E::APP_BAD_MODE;
+	RestoreMode_E restore_mode = RestoreMode_E::RESTORE_ONLY_GOOD;
 };
+
+
+struct UdevEventDescriptor_t
+{
+	std::string action; // either add or remove
+	std::string devType; // disk, partition, ...
+	std::string subSystem; // "block" , @ sys/class/...
+};
+
