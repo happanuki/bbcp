@@ -105,7 +105,11 @@ libexfat:
 	$(MAKE) -C $(ROOT_DIR)/exfat.bundle/libexfat 
 
 install: 
-	cp -rv $(OUT_DIR)/$(APP_NAME) $(PREFIX)/bin/ 
+ifdef ($(DESTDIR))
+	cp $(OUT_DIR)/$(APP_NAME) $(PREFIX)/bin/ 
+else
+	cp $(OUT_DIR)/$(APP_NAME) $(DESTDIR)/bin/ 
+endif
 
 clean:
 	rm -rf $(OBJ_DIR)  
