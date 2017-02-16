@@ -76,3 +76,11 @@ struct UdevEventDescriptor_t
 	std::string subSystem; // "block" , @ sys/class/...
 };
 
+
+struct ReportFile_t
+{
+	std::string fileName;
+	off_t badOffset;
+	off_t totalSize;
+};
+

@@ -1,22 +1,27 @@
 #pragma once
 
 #include <string>
-#include <set>
-#include <mutex>
+#include <vector>
 
 #include "Types.h"
 
 class Reporter
 {
-	std::mutex m_mtx;
+	std::vector<std::string> m_lostDirs;
+	std::vector<ReportFile_t> m_badFiles;
+	std::vector<ReportFile_t> m_goodFiles;
 
-	std::set<std::string> m_badDirs;
-
-	std::set<std::string> m_badOffsets;
+	time_t m_startDate;
 
 public:
-	Reporter() {}
+	Reporter();
+	~Reporter();
 
-	void addBadDir( std::string dir) {}
+	void startNow(); //updates m_startDate with cur time
 
+	void addLostDir( std::string dir);
+	void addBadFile( ReportFile_t file);
+	void addGoodFile( ReportFile_t file);
+
+	void printReport();
 };
