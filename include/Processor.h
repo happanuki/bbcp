@@ -5,6 +5,7 @@
 
 #include "Unit.h"
 #include "Types.h"
+#include "Reporter.h"
 
 class Processor
 {
