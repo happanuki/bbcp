@@ -5,6 +5,7 @@
 #include "Wizard.h"
 
 #include <sys/mount.h>
+#include <stdlib.h>
 
 
 Wizard::Wizard(AppParameters_t& p) :
@@ -38,7 +39,12 @@ void Wizard::_getDirTo()
 	(void) umount(m_localMountPoint.c_str());
 	System::mount(part, m_localMountPoint,"exfat", MS_NOEXEC|MS_NOSUID);
 
+
 	m_parameters.restoreDir = m_localMountPoint;
+
+	std::string cmd("/usr/sbin/mount.exfat ");
+	cmd+=" " + part + " " + m_localMountPoint;
+	system(cmd.c_str());
 
 	LOGSTDOUT(" WIZARD == > " << " GOOD HDD      : " << hdd);
 	LOGSTDOUT(" WIZARD == > " << " GOOD DIR      : " << m_localMountPoint);
@@ -55,6 +61,8 @@ void Wizard::run()
 	_getDirTo();
 	_getRestoreMode();
 	_getRunMode();
+
+	m_parameters.storageFile = m_localMountPoint+"/restorer.file";
 
 	LOGSTDOUT("\t >>> WIZARD COMPLETE <<<< ");
 }

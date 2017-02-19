@@ -49,7 +49,8 @@ void exfat_put_node(struct exfat* ef, struct exfat_node* node)
 	if (node->references < 0)
 	{
 		exfat_get_name(node, buffer, sizeof(buffer) - 1);
-		exfat_bug("reference counter of '%s' is below zero", buffer);
+		//exfat_bug("reference counter of '%s' is below zero", buffer);
+		return;
 	}
 	else if (node->references == 0 && node != ef->root)
 	{

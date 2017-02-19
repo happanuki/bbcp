@@ -39,7 +39,8 @@ static off_t s2o(const struct exfat* ef, off_t sector)
 static off_t c2s(const struct exfat* ef, cluster_t cluster)
 {
 	if (cluster < EXFAT_FIRST_DATA_CLUSTER)
-		exfat_bug("invalid cluster number %u", cluster);
+		//exfat_bug("invalid cluster number %u", cluster);
+		return 0;
 	return le32_to_cpu(ef->sb->cluster_sector_start) +
 		((off_t) (cluster - EXFAT_FIRST_DATA_CLUSTER) << ef->sb->spc_bits);
 }
@@ -77,7 +78,8 @@ cluster_t exfat_next_cluster(const struct exfat* ef,
 	off_t fat_offset;
 
 	if (cluster < EXFAT_FIRST_DATA_CLUSTER)
-		exfat_bug("bad cluster 0x%x", cluster);
+		return 0;
+		//exfat_bug("bad cluster 0x%x", cluster);
 
 	if (IS_CONTIGUOUS(*node))
 		return cluster + 1;
@@ -214,11 +216,11 @@ static cluster_t allocate_cluster(struct exfat* ef, cluster_t hint)
 
 static void free_cluster(struct exfat* ef, cluster_t cluster)
 {
-	if (CLUSTER_INVALID(cluster))
-		exfat_bug("freeing invalid cluster 0x%x", cluster);
-	if (cluster - EXFAT_FIRST_DATA_CLUSTER >= ef->cmap.size)
-		exfat_bug("freeing non-existing cluster 0x%x (0x%x)", cluster,
-				ef->cmap.size);
+	if (CLUSTER_INVALID(cluster)) return;
+		//exfat_bug("freeing invalid cluster 0x%x", cluster);
+	if (cluster - EXFAT_FIRST_DATA_CLUSTER >= ef->cmap.size) return;
+		//exfat_bug("freeing non-existing cluster 0x%x (0x%x)", cluster,
+				//ef->cmap.size);
 
 	BMAP_CLR(ef->cmap.chunk, cluster - EXFAT_FIRST_DATA_CLUSTER);
 	ef->cmap.dirty = true;
@@ -246,7 +248,8 @@ static int grow_file(struct exfat* ef, struct exfat_node* node,
 	uint32_t allocated = 0;
 
 	if (difference == 0)
-		exfat_bug("zero clusters count passed");
+		return 0;
+		//exfat_bug("zero clusters count passed");
 
 	if (node->start_cluster != EXFAT_CLUSTER_FREE)
 	{
@@ -260,8 +263,8 @@ static int grow_file(struct exfat* ef, struct exfat_node* node,
 	}
 	else
 	{
-		if (node->fptr_index != 0)
-			exfat_bug("non-zero pointer index (%u)", node->fptr_index);
+		if (node->fptr_index != 0) return 0;
+			//exfat_bug("non-zero pointer index (%u)", node->fptr_index);
 		/* file does not have clusters (i.e. is empty), allocate
 		   the first one for it */
 		previous = allocate_cluster(ef, 0);
